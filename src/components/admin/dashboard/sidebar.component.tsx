@@ -39,12 +39,11 @@ export default function Sidebar() {
       >
         <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50">
           <a
-            href="https://flowbite.com/"
             className="flex items-center ps-2.5 mb-5 gap-2"
           >
             <Image src={TVC_LOGO} alt="TVC LOGO" width={40} height={50} />
 
-            <span className="self-center text-xl font-semibold whitespace-nowrap ">
+            <span className="self-center text-xl font-semibold whitespace-nowrap text-black">
               Administración
             </span>
           </a>
