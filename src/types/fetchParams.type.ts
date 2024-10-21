@@ -3,4 +3,5 @@ export type FetchParams = {
   body?: BodyInit;
   headers?: HeadersInit;
   requiresAuth?: boolean;
+  credentials?: RequestCredentials;
 };

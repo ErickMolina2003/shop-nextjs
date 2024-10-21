@@ -9,20 +9,20 @@ type TToken = string | undefined | null;
 class ApiClient {
   private accessToken: TToken;
 
-  private async fetchToken(): Promise<TToken> {
-    if (authStore.getState().accessToken) {
-      this.accessToken = authStore.getState().accessToken;
-      return this.accessToken;
-    }
+  //   private async fetchToken(): Promise<TToken> {
+  //     if (authStore.getState().accessToken) {
+  //       this.accessToken = authStore.getState().accessToken;
+  //       return this.accessToken;
+  //     }
 
-    window.location.href = '/login';
-    this.accessToken = null;
-    return this.accessToken;
-  }
+  //     window.location.href = '/login';
+  //     this.accessToken = null;
+  //     return this.accessToken;
+  //   }
 
   private async handleErrors(response: Response): Promise<Response> {
-    if ([302].includes(response.status)) {
-      window.location.replace('/logout');
+    if (response.status === 401) {
+      window.location.replace('/admin/login');
     }
     if (!response.ok) {
       const error = await response.json();
@@ -40,7 +40,7 @@ class ApiClient {
       'content-type': 'application/json',
     },
     credentials = 'include',
-    requiresAuth = true,
+    // requiresAuth = true,
   }: {
     url: string;
     body?: BodyInit;
@@ -49,7 +49,7 @@ class ApiClient {
     credentials?: RequestCredentials;
     requiresAuth?: boolean;
   }): Promise<T> {
-    let requestHeaders = { ...headers };
+    const requestHeaders = { ...headers };
 
     // if (requiresAuth) {
     //   const token = await this.fetchToken();
@@ -66,6 +66,7 @@ class ApiClient {
       method,
       headers: requestHeaders,
       body,
+      credentials,
     });
 
     await this.handleErrors(response);
@@ -78,6 +79,7 @@ class ApiClient {
     body,
     headers,
     requiresAuth,
+    credentials,
   }: FetchParams): Promise<T> {
     return await this.fetch<T>({
       url,
@@ -85,6 +87,7 @@ class ApiClient {
       body,
       headers,
       requiresAuth,
+      credentials,
     });
   }
 
@@ -93,6 +96,7 @@ class ApiClient {
     body,
     headers,
     requiresAuth,
+    credentials,
   }: FetchParams): Promise<T> {
     return await this.fetch<T>({
       url,
@@ -100,6 +104,7 @@ class ApiClient {
       body,
       headers,
       requiresAuth,
+      credentials,
     });
   }
 
@@ -108,6 +113,7 @@ class ApiClient {
     body,
     headers,
     requiresAuth,
+    credentials,
   }: FetchParams): Promise<T> {
     return await this.fetch<T>({
       url,
@@ -115,6 +121,7 @@ class ApiClient {
       body,
       headers,
       requiresAuth,
+      credentials,
     });
   }
 
@@ -123,6 +130,7 @@ class ApiClient {
     body,
     headers,
     requiresAuth,
+    credentials,
   }: FetchParams): Promise<T> {
     return await this.fetch<T>({
       url,
@@ -130,6 +138,7 @@ class ApiClient {
       body,
       headers,
       requiresAuth,
+      credentials,
     });
   }
 
@@ -138,6 +147,7 @@ class ApiClient {
     body,
     headers,
     requiresAuth,
+    credentials,
   }: FetchParams): Promise<T> {
     return await this.fetch<T>({
       url,
@@ -145,6 +155,7 @@ class ApiClient {
       body,
       headers,
       requiresAuth,
+      credentials,
     });
   }
 }
