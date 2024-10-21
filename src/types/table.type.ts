@@ -1,5 +1,5 @@
-import { User } from "./auth/user.type";
-import { Product } from "./product.type";
+import { User } from './auth/user.type';
+import { Product } from './product.type';
 
 export type DataTableOrders = {
   _id: string;
@@ -10,3 +10,22 @@ export type DataTableOrders = {
   createdAt: Date;
   __v: number;
 };
+
+export type DataTableProducts = {
+  _id: string;
+  name: string;
+  description: string;
+  price: number;
+  stock: number;
+  category: Category;
+  createdAt: Date;
+  __v: number;
+};
+
+export interface Category {
+  _id: string;
+  name: string;
+  description: string;
+  createdAt: Date;
+  __v: number;
+}

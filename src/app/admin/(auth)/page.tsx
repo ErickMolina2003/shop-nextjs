@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 const tableHeaders = ['ORDER ID', 'CREADA', 'CLIENTE', 'TOTAL', 'STATUS'];
 
 export default function Main() {
-  const [allProducts, setAllProducts] = useState([]);
+  const [allOrders, setAllOrders] = useState([]);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -18,7 +18,7 @@ export default function Main() {
           throw new Error('Error al obtener los pedidos');
         }
 
-        setAllProducts(response);
+        setAllOrders(response);
 
         console.log(response);
       } catch (error) {
@@ -30,9 +30,8 @@ export default function Main() {
 
   return (
     <>
-      {allProducts.length > 0 && (
-        <Table tableHeaders={tableHeaders} tableData={allProducts} />
-        // <h1>hola</h1>
+      {allOrders.length > 0 && (
+        <Table tableHeaders={tableHeaders} tableData={allOrders} />
       )}
     </>
   );

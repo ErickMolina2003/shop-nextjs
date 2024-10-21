@@ -3,17 +3,18 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faChevronLeft,
-  faChevronCircleDown,
+  faTrashCan,
+  faPencil,
 } from '@fortawesome/free-solid-svg-icons';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { DataTableOrders } from '@/types/table.type';
+import { DataTableProducts } from '@/types/table.type';
 
 export default function Table({
   tableHeaders,
   tableData,
 }: {
   tableHeaders: string[];
-  tableData: DataTableOrders[];
+  tableData: DataTableProducts[];
 }) {
   return (
     <div className='relative overflow-x-auto'>
@@ -37,14 +38,19 @@ export default function Table({
               >
                 {data._id.slice(-4)}
               </th>
-              <td className='px-6 py-4'>
-                {new Date(data.createdAt).toLocaleDateString()}
-              </td>
-              <td className='px-6 py-4'>{data.user.email}</td>
-              <td className='px-6 py-4'>{data.totalPrice}</td>
-              <td className='px-6 py-4'>{data.status}</td>
+              <td className='px-6 py-4'>{data.name}</td>
+              <td className='px-6 py-4'>{data.category.name}</td>
+              <td className='px-6 py-4'>{data.price}</td>
+              <td className='px-6 py-4'>{data.description}</td>
+              <td className='px-6 py-4'>{data.stock}</td>
               <td className='px-6 py-4 text-center'>
-                <FontAwesomeIcon icon={faChevronCircleDown} size='1x' />
+                <div className='flex items-center justify-center gap-2'>
+                  <button className='rounded-lg text-white bg-[#ffc301] p-1'>
+                    Ver Imagen
+                  </button>
+                  <FontAwesomeIcon icon={faTrashCan} size='1x' />
+                  <FontAwesomeIcon icon={faPencil} size='1x' />
+                </div>
               </td>
             </tr>
           ))}
