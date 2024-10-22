@@ -9,13 +9,18 @@ import {
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { DataTableProducts } from '@/types/table.type';
 import { deleteProductApi } from '@/services/admin/productApi';
+import { PaginationProps } from '@/components/shop/pagination.component';
 
 export default function Table({
   tableHeaders,
   tableData,
+  pagination,
+  setPagination,
 }: {
   tableHeaders: string[];
   tableData: DataTableProducts[];
+  pagination: PaginationProps;
+  setPagination: (page: number) => void;
 }) {
   async function handleDeleteProduct(id: string) {
     try {
@@ -29,6 +34,12 @@ export default function Table({
     } catch (error) {
       console.error(error);
     }
+  }
+
+  function handleStepper(page: number) {
+    if (page === pagination.currentPage) return;
+    if (page <= 0) return;
+    setPagination(page);
   }
 
   return (
@@ -85,61 +96,38 @@ export default function Table({
         className='flex items-center flex-column flex-wrap md:flex-row justify-center pt-4'
         aria-label='Table navigation'
       >
-        <ul className='inline-flex -space-x-px rtl:space-x-reverse text-sm h-8 gap-1'>
+        <ul className='w-full inline-flex justify-between -space-x-px rtl:space-x-reverse text-sm h-8 gap-1'>
           <li>
             <a
-              href='#'
-              className='flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700'
+              onClick={() => handleStepper(pagination.currentPage - 1)}
+              className='flex items-center justify-center px-3 h-8 ms-0 gap-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700'
             >
               <FontAwesomeIcon icon={faChevronLeft} size='1x' />
+              Anterior
             </a>
           </li>
+          <div className='hidden md:flex items-center justify-center gap-1'>
+            {Array.from({ length: pagination.totalPages }, (_, index) => (
+              <li key={index}>
+                <a
+                  className={`flex items-center justify-center px-3 h-8 leading-tight text-gray-500 ${
+                    pagination.currentPage == index + 1
+                      ? 'bg-[#ffc301] text-white'
+                      : 'bg-white border'
+                  } border border-gray-300 hover:bg-gray-100 hover:text-gray-700`}
+                  onClick={() => handleStepper(index + 1)}
+                >
+                  {index + 1}
+                </a>
+              </li>
+            ))}
+          </div>
           <li>
             <a
-              href='#'
-              className='flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700'
+              onClick={() => handleStepper(pagination.currentPage + 1)}
+              className='flex items-center justify-center px-3 h-8 gap-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700'
             >
-              1
-            </a>
-          </li>
-          <li>
-            <a
-              href='#'
-              className='flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700'
-            >
-              2
-            </a>
-          </li>
-          <li>
-            <a
-              href='#'
-              aria-current='page'
-              className='flex items-center justify-center px-3 h-8 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700'
-            >
-              3
-            </a>
-          </li>
-          <li>
-            <a
-              href='#'
-              className='flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700'
-            >
-              4
-            </a>
-          </li>
-          <li>
-            <a
-              href='#'
-              className='flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700'
-            >
-              5
-            </a>
-          </li>
-          <li>
-            <a
-              href='#'
-              className='flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700'
-            >
+              Siguiente
               <FontAwesomeIcon icon={faChevronRight} size='1x' />
             </a>
           </li>

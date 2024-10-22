@@ -1,10 +1,10 @@
 import { CreateProduct } from '@/types/product.type';
 import { baseApi } from '../baseApi';
 
-export const getProductsApi = async () =>
+export const getProductsApi = async (page: number, limit: number) =>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   baseApi.get<any>({
-    url: `/products`,
+    url: `/products/?page=${page}&limit=${limit}`,
   });
 
 export const createProductApi = async (body: CreateProduct) =>
