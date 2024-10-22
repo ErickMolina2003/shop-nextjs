@@ -13,3 +13,9 @@ export const createProductApi = async (body: CreateProduct) =>
     url: `/products`,
     body: JSON.stringify(body),
   });
+
+export const deleteProductApi = async (id: string) =>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  baseApi.delete<any>({
+    url: `/products/${id}`,
+  });

@@ -8,6 +8,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { DataTableProducts } from '@/types/table.type';
+import { deleteProductApi } from '@/services/admin/productApi';
 
 export default function Table({
   tableHeaders,
@@ -16,6 +17,20 @@ export default function Table({
   tableHeaders: string[];
   tableData: DataTableProducts[];
 }) {
+  async function handleDeleteProduct(id: string) {
+    try {
+      const response = await deleteProductApi(id);
+
+      if (!response) {
+        throw new Error('Error al eliminar el producto');
+      }
+
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
     <div className='relative overflow-x-auto'>
       <table className='w-full text-sm text-left rtl:text-right text-gray-500'>
@@ -48,8 +63,17 @@ export default function Table({
                   <button className='rounded-lg text-white bg-[#ffc301] p-1'>
                     Ver Imagen
                   </button>
-                  <FontAwesomeIcon icon={faTrashCan} size='1x' />
-                  <FontAwesomeIcon icon={faPencil} size='1x' />
+                  <FontAwesomeIcon
+                    icon={faTrashCan}
+                    size='1x'
+                    onClick={() => handleDeleteProduct(data._id)}
+                  />
+
+                  <FontAwesomeIcon
+                    icon={faPencil}
+                    size='1x'
+                    onClick={() => console.log('Editar')}
+                  />
                 </div>
               </td>
             </tr>
@@ -123,21 +147,24 @@ export default function Table({
       </nav>
 
       <div
-        id='editUserModal'
+        id='default-modal'
         tabIndex={-1}
         className='fixed top-0 left-0 right-0 z-50 items-center justify-center hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full'
       >
         <div className='relative w-full max-w-2xl max-h-full'>
-          <form className='relative bg-white rounded-lg shadow'>
-            <div className='flex items-start justify-between p-4 border-b rounded-t'>
-              <h3 className='text-xl font-semibold text-gray-900'>Edit user</h3>
+          <div className='relative bg-white rounded-lg shadow'>
+            <div className='flex items-center justify-between p-4 md:p-5 border-b rounded-t'>
+              <h3 className='w-full text-xl text-center font-semibold text-gray-900'>
+                Agregar un Producto
+              </h3>
               <button
                 type='button'
-                className='text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center'
-                data-modal-hide='editUserModal'
+                className='end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center'
+                data-modal-hide='default-modal'
               >
                 <svg
                   className='w-3 h-3'
+                  aria-hidden='true'
                   xmlns='http://www.w3.org/2000/svg'
                   fill='none'
                   viewBox='0 0 14 14'
@@ -153,115 +180,74 @@ export default function Table({
                 <span className='sr-only'>Close modal</span>
               </button>
             </div>
-            <div className='p-6 space-y-6'>
-              <div className='grid grid-cols-6 gap-6'>
-                <div className='col-span-6 sm:col-span-3'>
+            <div className='p-4 md:p-5'>
+              <form className='space-y-4' action='#'>
+                <div>
                   <label className='block mb-2 text-sm font-medium text-gray-900'>
-                    First Name
+                    Categoría
+                  </label>
+                  <select
+                    id='countries'
+                    className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'
+                  >
+                    <option value=''>Selecciona una categoría</option>
+                  </select>
+                </div>
+                <div>
+                  <label className='block mb-2 text-sm font-medium text-gray-900'>
+                    Nombre
                   </label>
                   <input
-                    type='text'
-                    name='first-name'
-                    id='first-name'
-                    className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5'
-                    placeholder='Bonnie'
+                    placeholder='Ingresa el Nombre del producto'
+                    className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'
                   />
                 </div>
-                <div className='col-span-6 sm:col-span-3'>
+
+                <div>
                   <label className='block mb-2 text-sm font-medium text-gray-900'>
-                    Last Name
+                    Precio
                   </label>
                   <input
-                    type='text'
-                    name='last-name'
-                    id='last-name'
-                    className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5'
-                    placeholder='Green'
+                    placeholder='Ingresa el precio del producto'
+                    className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'
                   />
                 </div>
-                <div className='col-span-6 sm:col-span-3'>
+
+                <div>
                   <label className='block mb-2 text-sm font-medium text-gray-900'>
-                    Email
+                    Cantidad
                   </label>
                   <input
-                    type='email'
-                    name='email'
-                    id='email'
-                    className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5'
-                    placeholder='example@company.com'
+                    placeholder='Ingresa la cantidad en stock'
+                    className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'
                   />
                 </div>
-                <div className='col-span-6 sm:col-span-3'>
+
+                <div>
                   <label className='block mb-2 text-sm font-medium text-gray-900'>
-                    Phone Number
+                    Descripción
                   </label>
-                  <input
-                    type='number'
-                    name='phone-number'
-                    id='phone-number'
-                    className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5'
-                    placeholder='e.g. +(12)3456 789'
+
+                  <textarea
+                    rows={4}
+                    className='block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500'
+                    placeholder='Ingresa una descripción del producto'
                   />
                 </div>
-                <div className='col-span-6 sm:col-span-3'>
-                  <label className='block mb-2 text-sm font-medium text-gray-900'>
-                    Department
-                  </label>
-                  <input
-                    type='text'
-                    name='department'
-                    id='department'
-                    className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5'
-                    placeholder='Development'
-                  />
-                </div>
-                <div className='col-span-6 sm:col-span-3'>
-                  <label className='block mb-2 text-sm font-medium text-gray-900'>
-                    Company
-                  </label>
-                  <input
-                    type='number'
-                    name='company'
-                    id='company'
-                    className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5'
-                    placeholder='123456'
-                  />
-                </div>
-                <div className='col-span-6 sm:col-span-3'>
-                  <label className='block mb-2 text-sm font-medium text-gray-900'>
-                    Current Password
-                  </label>
-                  <input
-                    type='password'
-                    name='current-password'
-                    id='current-password'
-                    className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5'
-                    placeholder='••••••••'
-                  />
-                </div>
-                <div className='col-span-6 sm:col-span-3'>
-                  <label className='block mb-2 text-sm font-medium text-gray-900'>
-                    New Password
-                  </label>
-                  <input
-                    type='password'
-                    name='new-password'
-                    id='new-password'
-                    className='shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5'
-                    placeholder='••••••••'
-                  />
-                </div>
-              </div>
+
+                <button className='w-full text-white bg-[#ffc301] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center'>
+                  Confirm
+                </button>
+                <button
+                  onClick={(e) => e.preventDefault()}
+                  data-modal-hide='editProductModal'
+                  className='w-full text-black bg-white border border-black hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center'
+                >
+                  Cancel
+                </button>
+              </form>
             </div>
-            <div className='flex items-center p-6 space-x-3 rtl:space-x-reverse border-t border-gray-200 rounded-b'>
-              <button
-                type='submit'
-                className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center'
-              >
-                Save all
-              </button>
-            </div>
-          </form>
+          </div>
         </div>
       </div>
     </div>

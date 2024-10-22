@@ -39,8 +39,6 @@ export default function ProductCard({ product }: { product: Product }) {
 
     newShopCart.totalPrice = totalPrice;
 
-    console.log(newShopCart)
-
     setShopCart(newShopCart);
   }
 

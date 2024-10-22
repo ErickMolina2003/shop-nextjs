@@ -22,6 +22,7 @@ export default function NavBar() {
   function handleAddToCart(product: ShopCartProduct, amount: number) {
     if (product.quantity <= 1 && amount < 0) return;
     if (!shopCart?.user) return;
+    if (product.quantity + amount > product.stock) return;
 
     const newShopCart = {
       user: shopCart.user,
