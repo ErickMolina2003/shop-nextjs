@@ -22,7 +22,7 @@ class ApiClient {
 
   private async handleErrors(response: Response): Promise<Response> {
     if (response.status === 401) {
-      window.location.replace('/admin/login');
+      window.location.replace('/login');
     }
     if (!response.ok) {
       const error = await response.json();

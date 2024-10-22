@@ -31,12 +31,12 @@ export default function Signup() {
         username,
         email,
         password,
-        isAdmin: true,
+        isAdmin: false,
       };
       const response = await authRegisterApi(body);
 
       if (response) {
-        router.push('/admin/login');
+        router.push('/login');
       } else {
         throw new Error('Error al registrar');
       }
