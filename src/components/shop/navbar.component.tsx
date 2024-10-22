@@ -11,8 +11,89 @@ import {
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import ProductImg from '@/assets/images/producto.png';
+import { shopCartStore } from '@/store/shopCartStore';
+import { ShopCartProduct } from '@/types/cart.type';
+import { FormEvent } from 'react';
+import { createOrderApi } from '@/services/admin/orderApi';
 
 export default function NavBar() {
+  const { setShopCart, shopCart, reset } = shopCartStore();
+
+  function handleAddToCart(product: ShopCartProduct, amount: number) {
+    if (product.quantity <= 1 && amount < 0) return;
+    if (!shopCart?.user) return;
+
+    const newShopCart = {
+      user: shopCart.user,
+      products: shopCart.products,
+      totalPrice: shopCart.totalPrice,
+    };
+
+    newShopCart.products.map((p) => {
+      if (p._id === product._id) {
+        p.quantity = product.quantity + amount;
+      }
+    });
+
+    const totalPrice = newShopCart.products.reduce(
+      (accumulator, product) => accumulator + product.price * product.quantity,
+      0
+    );
+
+    newShopCart.totalPrice = totalPrice;
+
+    setShopCart(newShopCart);
+  }
+
+  function handleRemoveFromCart(product: ShopCartProduct) {
+    if (!shopCart?.user) return;
+
+    const newShopCart = {
+      user: shopCart.user,
+      products: shopCart.products,
+      totalPrice: shopCart.totalPrice,
+    };
+
+    newShopCart.products = newShopCart.products.filter(
+      (p) => p._id !== product._id
+    );
+
+    const totalPrice = newShopCart.products.reduce(
+      (accumulator, product) => accumulator + product.price * product.quantity,
+      0
+    );
+
+    newShopCart.totalPrice = totalPrice;
+
+    setShopCart(newShopCart);
+  }
+
+  async function payShopCart(event: FormEvent) {
+    event.preventDefault();
+    if (!shopCart?.user) return;
+    if (shopCart?.products.length === 0) return;
+    if (!shopCart?.totalPrice) return;
+
+    const body = {
+      totalPrice: shopCart.totalPrice,
+      user: shopCart.user._id,
+      products: shopCart.products.map((product) => product._id),
+    };
+
+    try {
+      const response = await createOrderApi(body);
+      if (!response) {
+        throw new Error('Error al crear el pedido');
+      }
+
+      reset();
+
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
     <>
       <nav className='bg-white border-b border-gray-400'>
@@ -87,7 +168,7 @@ export default function NavBar() {
                   className='z-10'
                 />
                 <p className='absolute -top-4 -right-2 text-[#ffc301] text-xs font-bold bg-slate-100 rounded-full p-1'>
-                  10
+                  {shopCart?.products.length ?? 0}
                 </p>
               </div>
               <FontAwesomeIcon icon={faUser} size='1x' color='black' />
@@ -198,7 +279,10 @@ export default function NavBar() {
                   />
                 </div>
                 <div>
-                  <button className='text-white bg-[#ffc301] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center'>
+                  <button
+                    onClick={payShopCart}
+                    className='text-white bg-[#ffc301] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center'
+                  >
                     Pagar
                   </button>
                 </div>
@@ -228,50 +312,65 @@ export default function NavBar() {
             <div className='p-6 space-y-6'>
               <div className='grid grid-cols-3'>
                 <h2 className='text-black'>Total</h2>
-                <p className='text-gray-500 text-center'>3 Items</p>
-                <h3 className='text-black text-end'>$432</h3>
+                <p className='text-gray-500 text-center'>
+                  {shopCart?.products.length ?? 0} Items
+                </p>
+                <h3 className='text-black text-end'>
+                  ${shopCart?.totalPrice ?? 0}
+                </h3>
               </div>
             </div>
             <div className='flex items-center space-x-3 rtl:space-x-reverse border-t-8 border-gray-300 rounded-b'></div>
             <div className='p-6 space-y-6'>
-              <div className='grid grid-cols-4'>
-                <Image
-                  src={ProductImg}
-                  width={200}
-                  height={300}
-                  alt='Producto'
-                />
-                <div>
-                  <h2 className='text-black'>Hogar</h2>
-                  <p className='text-black'>Mueble de sala 3 piezas</p>
-                </div>
-                <div className='flex flex-col items-center justify-center gap-1'>
-                  <div className='flex items-center gap-1'>
-                    <p className='text-black'>1</p>
-                    <div className='flex flex-col items-center gap-1'>
+              {shopCart?.products ? (
+                shopCart?.products.map((product) => (
+                  <div key={product._id} className='grid grid-cols-4'>
+                    <Image
+                      src={ProductImg}
+                      width={200}
+                      height={300}
+                      alt='Producto'
+                    />
+                    <div>
+                      <h2 className='text-black'>{product.name}</h2>
+                      <p className='text-black'>{product.description}</p>
+                    </div>
+                    <div className='flex flex-col items-center justify-center gap-1'>
+                      <div className='flex items-center gap-1'>
+                        <p className='text-black'>{product.quantity}</p>
+                        <div className='flex flex-col items-center gap-1'>
+                          <FontAwesomeIcon
+                            icon={faChevronUp}
+                            size='1x'
+                            color='black'
+                            className='z-10'
+                            onClick={() => handleAddToCart(product, 1)}
+                          />
+                          <FontAwesomeIcon
+                            icon={faChevronDown}
+                            size='1x'
+                            color='black'
+                            className='z-10'
+                            onClick={() => handleAddToCart(product, -1)}
+                          />
+                        </div>
+                      </div>
                       <FontAwesomeIcon
-                        icon={faChevronUp}
+                        icon={faTrash}
                         size='1x'
-                        color='black'
+                        color='red'
                         className='z-10'
-                      />
-                      <FontAwesomeIcon
-                        icon={faChevronDown}
-                        size='1x'
-                        color='black'
-                        className='z-10'
+                        onClick={() => handleRemoveFromCart(product)}
                       />
                     </div>
+                    <h3 className='text-black text-end'>
+                      ${product.price * product.quantity}
+                    </h3>
                   </div>
-                  <FontAwesomeIcon
-                    icon={faTrash}
-                    size='1x'
-                    color='red'
-                    className='z-10'
-                  />
-                </div>
-                <h3 className='text-black text-end'>$145</h3>
-              </div>
+                ))
+              ) : (
+                <h1 className='text-black text-center'>Sin productos</h1>
+              )}
             </div>
           </form>
         </div>

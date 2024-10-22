@@ -1,6 +1,7 @@
 'use client';
 
 import { authLoginApi } from '@/services/auth/loginApi';
+import { authStore } from '@/store/authStore';
 import { useRouter } from 'next/navigation';
 import { FormEvent, useState } from 'react';
 
@@ -8,6 +9,7 @@ export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { setUser } = authStore();
 
   function handleLogin(e: FormEvent) {
     e.preventDefault();
@@ -29,6 +31,7 @@ export default function Login() {
       const response = await authLoginApi(body);
 
       if (response) {
+        setUser(response);
         router.push('/');
       } else {
         throw new Error('Error al registrar');
