@@ -2,6 +2,11 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+1. npm install
+2. copy .env.example to .env
+3. replace NEXT_PUBLIC_API_URL with your local api url http://localhost:8080
+4. npm run dev
+
 First, run the development server:
 
 ```bash
