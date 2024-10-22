@@ -323,7 +323,7 @@ export default function NavBar() {
             </div>
             <div className='flex items-center space-x-3 rtl:space-x-reverse border-t-8 border-gray-300 rounded-b'></div>
             <div className='p-6 space-y-6'>
-              {shopCart?.products ? (
+              {shopCart?.products && shopCart?.products.length > 0 ? (
                 shopCart?.products.map((product) => (
                   <div key={product._id} className='grid grid-cols-4'>
                     <Image
