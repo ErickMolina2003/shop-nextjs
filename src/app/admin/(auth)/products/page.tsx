@@ -18,7 +18,7 @@ export default function Main() {
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
-    limit: 1,
+    limit: 10,
   });
   const firstRender = useRef(true);
 

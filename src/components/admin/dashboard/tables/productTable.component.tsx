@@ -83,7 +83,6 @@ export default function Table({
                   <FontAwesomeIcon
                     icon={faPencil}
                     size='1x'
-                    onClick={() => console.log('Editar')}
                   />
                 </div>
               </td>
