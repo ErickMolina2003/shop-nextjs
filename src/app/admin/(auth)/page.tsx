@@ -19,8 +19,6 @@ export default function Main() {
         }
 
         setAllOrders(response);
-
-        console.log(response);
       } catch (error) {
         console.error(error);
       }

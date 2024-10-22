@@ -27,7 +27,6 @@ export default function Login() {
       };
 
       const response = await authLoginApi(body);
-      console.log(response);
 
       if (response) {
         router.push('/admin/');
